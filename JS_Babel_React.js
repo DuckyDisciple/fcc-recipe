@@ -1,5 +1,45 @@
+var data = [
+  {
+    title: "Cookies",
+    ingredients: [
+      "1 pack cookie dough"
+    ],
+    directions: [
+      "Open package",
+      "Bake them for 20 min"
+    ]
+  },
+  {
+    title: "Salsa",
+    ingredients: [
+      "1 tomato",
+      "1 red pepper",
+      "1 onion",
+      "1 can tomato sauce",
+      "Vegetable oil"
+    ],
+    directions: [
+      "Dice up tomato, pepper, and onion",
+      "Add a little oil to a pan and sautee veggies",
+      "Put sauce in pan with veggies and let simmer for 5 minutes"
+    ]
+  }
+];
+
 var Box = React.createClass({
   editMode: false,
+  curIndex: 0,
+  titleList: function(){
+    console.log(this.props.data);
+    var titles = [];
+    for(var i in this.props.data){
+      titles.push(this.props.data[i].title);
+    }
+    return titles;
+  },
+  showCard: function(){
+    return this.props.data[this.curIndex];
+  },
   addBtnClick: function(){
     this.editMode = true;
     this.forceUpdate();
@@ -17,7 +57,7 @@ var Box = React.createClass({
       return (
         <div className="box">
           <div className="left-side">
-            <List />
+            <List titles={this.titleList()}/>
           </div>
           <div className="right-side">
             <EditCard />
@@ -29,10 +69,10 @@ var Box = React.createClass({
     return (
       <div className="box">
         <div className="left-side">
-          <List />
+          <List titles={this.titleList()}/>
         </div>
         <div className="right-side">
-          <Card />
+          <Card cardData={this.showCard()} />
           <Add addClicked={this.addBtnClick} />
           <Edit editClicked={this.editBtnClick} />
           <Delete />
@@ -44,10 +84,13 @@ var Box = React.createClass({
 
 var List = React.createClass({
   render: function(){
+    var liList = this.props.titles.map(function(title){
+      return (<li>{title}</li>);
+    });
     return (
       <div className="cards">
         <ul className="card-list">
-          <li>Cookies</li>
+          {liList}
         </ul>
       </div>
     );
@@ -58,9 +101,9 @@ var Card = React.createClass({
   render: function(){
     return (
       <div className="card">
-        <h2>How to make cookies</h2>
-        <Ingredients />
-        <Directions />
+        <h2>{this.props.cardData.title}</h2>
+        <Ingredients ingrList={this.props.cardData.ingredients} />
+        <Directions dirList={this.props.cardData.directions} />
       </div>
     );
   }
@@ -83,9 +126,12 @@ var EditCard = React.createClass({
 
 var Ingredients = React.createClass({
   render: function(){
+    var ingreds = this.props.ingrList.map(function(item){
+      return (<li>{item}</li>);
+    });
     return (
       <ul className="ingredients">
-        <li>cookie dough</li>
+        {ingreds}
       </ul>
     );
   }
@@ -93,10 +139,12 @@ var Ingredients = React.createClass({
 
 var Directions = React.createClass({
   render: function(){
+    var dirs = this.props.dirList.map(function(item){
+      return (<li>{item}</li>);
+    });
     return (
       <ol className="directions">
-        <li>Open package</li>
-        <li>Bake them</li>
+        {dirs}
       </ol>
     );
   }
@@ -143,4 +191,4 @@ var Save = React.createClass({
   }
 });
 
-React.render(<Box />,document.getElementById("content"));
+React.render(<Box data={data} />, document.getElementById("content"));
