@@ -148,8 +148,11 @@ var Card = React.createClass({
 });
 
 var EditCard = React.createClass({
-  addIngrTxt: function(){
-    
+  addIngr: function(){
+    $(".add-ingr").before('<input type="text" class="ingr-txt" />');
+  },
+  addDir: function(){
+    $(".add-dir").before('<input type="text" class="dir-txt" />');
   },
   render: function(){
     return (
@@ -160,12 +163,12 @@ var EditCard = React.createClass({
         {this.props.cardData.ingredients.map(function(ingr){
           return <input type="text" className="ingr-txt" defaultValue={ingr} />;
         })}
-        <p className="add-input">+</p>
+        <p className="add-ingr" onClick={this.addIngr}>+</p>
         <label>Directions</label>
         {this.props.cardData.directions.map(function(dir){
           return <input type="text" className="dir-txt" defaultValue={dir} />;
         })}
-        <p className="add-input">+</p>
+        <p className="add-dir" onClick={this.addDir}>+</p>
       </div>
     );
   }
