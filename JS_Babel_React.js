@@ -1,48 +1,46 @@
-var data = [
-  {
-    title: "Cookies",
-    ingredients: [
-      "1 pack cookie dough"
-    ],
-    directions: [
-      "Open package",
-      "Bake them for 20 min"
-    ]
-  },
-  {
-    title: "Salsa",
-    ingredients: [
-      "1 tomato",
-      "1 red pepper",
-      "1 onion",
-      "1 can tomato sauce",
-      "Vegetable oil"
-    ],
-    directions: [
-      "Dice up tomato, pepper, and onion",
-      "Add a little oil to a pan and sautee veggies",
-      "Put sauce in pan with veggies and let simmer for 5 minutes"
-    ]
-  }
-];
-
 var Box = React.createClass({
+  getInitialState: function(){
+    return {data:[], mounted:false};
+  },
+  componentDidMount: function(){
+    var local = JSON.parse(localStorage.getItem('recipes'));
+    if(local){
+      this.setState({data: local, mounted:true});
+    }else{
+      this.setState({data:[{
+        title:"Salsa",
+        ingredients:[
+          "1 tomato",
+          "1 red pepper",
+          "1 onion",
+          "1 can tomato sauce",
+          "Vegetable oil"],
+        directions:[
+          "Dice up tomato, pepper, and onion",
+          "Add a little oil to a pan and sautee veggies",
+          "Put sauce in pan with veggies and let simmer for 5 minutes"
+        ]
+      }], mounted:true});
+    }
+  },
   editMode: false,
   new: false,
   curIndex: 0,
   titleList: function(){
+    if(!this.state.mounted) return [];
     var titles = [];
-    for(var i in this.props.data){
-      titles.push(this.props.data[i].title);
+    for(var i in this.state.data){
+      titles.push(this.state.data[i].title);
     }
     return titles;
   },
   showCard: function(){
-    return this.props.data[this.curIndex];
+    if(!this.state.mounted) return {title:"", ingredients:[], directions:[]};
+    return this.state.data[this.curIndex];
   },
   editCard: function(){
     if(!this.new){
-      return this.props.data[this.curIndex];
+      return this.state.data[this.curIndex];
     }
     return {title: "", ingredients: [""], directions: [""]};
   },
@@ -60,10 +58,11 @@ var Box = React.createClass({
     this.forceUpdate();
   },
   delBtnClick: function(){
-    data = data.splice(this.curIndex, 1);
+    this.state.data.splice(this.curIndex, 1);
     if(this.curIndex>0){
       this.curIndex--;
     }
+    localStorage.setItem('recipes', JSON.stringify(this.state.data));
     this.forceUpdate();
   },
   saveBtnClick: function(){
@@ -79,10 +78,11 @@ var Box = React.createClass({
     }).get();
     recipe.directions = dirs;
     if(this.new){
-      this.props.data.push(recipe);
+      this.state.data.push(recipe);
     }else{
-      this.props.data[this.curIndex]=(recipe);
+      this.state.data[this.curIndex]=(recipe);
     }
+    localStorage.setItem('recipes',JSON.stringify(this.state.data));
     this.new = false;
     this.forceUpdate();
   },
@@ -148,6 +148,9 @@ var Card = React.createClass({
 });
 
 var EditCard = React.createClass({
+  addIngrTxt: function(){
+    
+  },
   render: function(){
     return (
       <div className="edit-card">
@@ -238,4 +241,4 @@ var Save = React.createClass({
   }
 });
 
-React.render(<Box data={data} />, document.getElementById("content"));
+React.render(<Box />, document.getElementById("content"));
