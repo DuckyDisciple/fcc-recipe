@@ -30,7 +30,6 @@ var Box = React.createClass({
   editMode: false,
   curIndex: 0,
   titleList: function(){
-    console.log(this.props.data);
     var titles = [];
     for(var i in this.props.data){
       titles.push(this.props.data[i].title);
@@ -39,6 +38,10 @@ var Box = React.createClass({
   },
   showCard: function(){
     return this.props.data[this.curIndex];
+  },
+  cardItemClicked: function(index){
+    this.curIndex = index;
+    this.forceUpdate();
   },
   addBtnClick: function(){
     this.editMode = true;
@@ -57,7 +60,7 @@ var Box = React.createClass({
       return (
         <div className="box">
           <div className="left-side">
-            <List titles={this.titleList()}/>
+            <List titles={this.titleList()} cardClicked={this.cardItemClicked} />
           </div>
           <div className="right-side">
             <EditCard />
@@ -69,7 +72,7 @@ var Box = React.createClass({
     return (
       <div className="box">
         <div className="left-side">
-          <List titles={this.titleList()}/>
+          <List titles={this.titleList()} cardClicked={this.cardItemClicked} />
         </div>
         <div className="right-side">
           <Card cardData={this.showCard()} />
@@ -83,14 +86,18 @@ var Box = React.createClass({
 });
 
 var List = React.createClass({
+  clicked: function(e){
+    this.props.cardClicked(e.target.value);
+  },
   render: function(){
-    var liList = this.props.titles.map(function(title){
-      return (<li>{title}</li>);
-    });
+    var titles = this.props.titles;
     return (
       <div className="cards">
         <ul className="card-list">
-          {liList}
+          {titles.map(function(title, index){
+            return (<li onClick={this.clicked} value={index}>{title}</li>);
+            }.bind(this)
+          )}
         </ul>
       </div>
     );
