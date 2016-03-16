@@ -1,0 +1,62 @@
+*
+  box-sizing: border-box
+h1
+  text-align: center
+.box
+  background: lightblue
+  border-radius: 10px
+  display: flex
+  padding: 10px
+  width: 800px
+  margin: 0 auto
+  .left-side
+    width: 30%
+    border: 1px solid black
+    border-radius: 5px
+    margin-right: 10px
+    li
+      list-style-type: none
+      font-size: 1.3em
+      text-decoration: underline
+      padding: 3px
+    li:hover
+      font-weight: bold
+      cursor: pointer
+  .right-side
+    text-align: center
+    border: 1px solid black
+    border-radius: 5px
+    padding: 5px
+    width: 70%
+    .card
+      .ingredients
+        text-align: left
+      .directions
+        text-align: left
+    .edit-card
+      display: flex
+      flex-direction: column
+      label
+        font-weight: bold
+      .title-txt
+        margin-bottom: 10px
+      p
+        margin: 2px auto 10px auto
+      p:hover
+        font-weight: bold
+        cursor: pointer
+button
+  border: none
+  border-radius: 3px
+  padding: 4px 6px
+  margin: 0 3px
+  background: orange
+  color: black
+  font-weight: bold
+  font-size: 1.2em
+button:hover
+  background: lighten(orange, 10%)
+  cursor: pointer
+input
+  width: 300px
+  margin: 2px auto
