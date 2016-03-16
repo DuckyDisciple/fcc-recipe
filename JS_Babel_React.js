@@ -28,6 +28,7 @@ var data = [
 
 var Box = React.createClass({
   editMode: false,
+  new: false,
   curIndex: 0,
   titleList: function(){
     var titles = [];
@@ -39,20 +40,50 @@ var Box = React.createClass({
   showCard: function(){
     return this.props.data[this.curIndex];
   },
+  editCard: function(){
+    if(!this.new){
+      return this.props.data[this.curIndex];
+    }
+    return {title: "", ingredients: [""], directions: [""]};
+  },
   cardItemClicked: function(index){
     this.curIndex = index;
     this.forceUpdate();
   },
   addBtnClick: function(){
     this.editMode = true;
+    this.new = true;
     this.forceUpdate();
   },
   editBtnClick: function(){
     this.editMode = true;
     this.forceUpdate();
   },
+  delBtnClick: function(){
+    data = data.splice(this.curIndex, 1);
+    if(this.curIndex>0){
+      this.curIndex--;
+    }
+    this.forceUpdate();
+  },
   saveBtnClick: function(){
     this.editMode = false;
+    var recipe = {};
+    recipe.title=$(".title-txt").first().val();
+    var ingrs = $(".ingr-txt").map(function(){
+      return $(this).val();
+    }).get();
+    recipe.ingredients = ingrs;
+    var dirs = $(".dir-txt").map(function(){
+      return $(this).val();
+    }).get();
+    recipe.directions = dirs;
+    if(this.new){
+      this.props.data.push(recipe);
+    }else{
+      this.props.data[this.curIndex]=(recipe);
+    }
+    this.new = false;
     this.forceUpdate();
   },
   render: function(){
@@ -63,7 +94,7 @@ var Box = React.createClass({
             <List titles={this.titleList()} cardClicked={this.cardItemClicked} />
           </div>
           <div className="right-side">
-            <EditCard />
+            <EditCard cardData={this.editCard()} />
             <Save saveClicked={this.saveBtnClick} />
           </div>
         </div>
@@ -78,7 +109,7 @@ var Box = React.createClass({
           <Card cardData={this.showCard()} />
           <Add addClicked={this.addBtnClick} />
           <Edit editClicked={this.editBtnClick} />
-          <Delete />
+          <Delete delClicked={this.delBtnClick} />
         </div>
       </div>
     );
@@ -121,11 +152,17 @@ var EditCard = React.createClass({
     return (
       <div className="edit-card">
         <label>Title</label>
-        <input type="text" name="title-txt" className="title" />
+        <input type="text" className="title-txt" defaultValue={this.props.cardData.title} />
         <label>Ingredients</label>
-        <input type="text" className="ingr-txt" />
+        {this.props.cardData.ingredients.map(function(ingr){
+          return <input type="text" className="ingr-txt" defaultValue={ingr} />;
+        })}
+        <p className="add-input">+</p>
         <label>Directions</label>
-        <input type="text" className="dir-txt" />
+        {this.props.cardData.directions.map(function(dir){
+          return <input type="text" className="dir-txt" defaultValue={dir} />;
+        })}
+        <p className="add-input">+</p>
       </div>
     );
   }
@@ -180,9 +217,12 @@ var Edit = React.createClass({
 });
 
 var Delete = React.createClass({
+  clicked: function(){
+    this.props.delClicked();
+  },
   render: function(){
     return (
-      <button className="del-btn">Delete</button>
+      <button className="del-btn" onClick={this.clicked}>Delete</button>
     );
   }
 });
